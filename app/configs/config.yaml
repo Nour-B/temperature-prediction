@@ -1,0 +1,44 @@
+
+data: 
+  raw_data_path: ./data/raw/london_weather.csv
+  clean_data_path: ./data/preprocessed/london_weather.csv
+  train_path: ./data/preprocessed/train.csv
+  test_path: ./data/preprocessed/test.csv
+
+train:
+  test_size: 0.33
+  random_state: 1
+
+
+models:
+
+  - name: LinearRegression
+    params: 
+      fit_intercept: True
+      n_jobs: -1
+    store_path: ./models/
+    store_filename: LinearRegression.pkl
+
+  - name: DecisionTreeRegressor
+    params:
+      random_state: 42
+      max_depth: 10
+    store_path: ./models/
+    store_filename: DecisionTreeRegressor.pkl
+
+
+  - name: RandomForestRegressor
+    params:
+      random_state: 42
+      max_depth: 10
+    store_path: ./models/
+    store_filename: RandomForestRegressor.pkl
+  
+
+evaluate:
+  metric: root_mean_squared_error
+
+
+
+
+  

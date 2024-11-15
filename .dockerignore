@@ -1,0 +1,6 @@
+*
+
+!docker/scripts
+!requirements.txt
+!pyproject.toml
+!poetry.lock
