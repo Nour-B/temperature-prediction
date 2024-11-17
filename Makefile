@@ -3,11 +3,12 @@
 
 include .envs/.postgres
 include .envs/.mlflow
+COMPOSE_DOCKER_CLI_BUILD=1
 export
+
 
 USER_NAME=$(shell whoami)
 USER_ID=$(shell id -u)
-
 
 
 # Run the pipeline 
@@ -18,14 +19,18 @@ build:
 	docker compose build
 
 up:
-	docker compose up
+	docker compose up 
 
 down:
 	docker compose down
 
-exec-in:
+exec-in-mlflow:
 	docker exec -it local-mlflow-tracking-server bash 
 
+exec-in-fastapi:
+	docker exec -it fastapi-server bash
+logs:
+	docker compose logs $$1
 
 
 

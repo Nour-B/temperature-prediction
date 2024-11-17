@@ -1,0 +1,33 @@
+FROM python:3.11-slim
+
+ARG USER_ID
+ARG USER_NAME
+
+ENV HOME=/home/${USER_NAME}
+ENV PATH=$PATH:${HOME}/.local/bin
+
+RUN apt-get -qq update \
+    && apt-get -qq -y install curl
+
+RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} 
+
+COPY ./docker/scripts/* /
+RUN chown -R ${USER_NAME} /*.sh && chmod +x /*.sh
+
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+USER ${USER_NAME}
+
+RUN mkdir -p ${HOME}/app 
+
+WORKDIR ${HOME}/app
+COPY . .
+#add web-app and models directory
+COPY web-app/ ./web-app
+COPY models/ ./models/
+
+RUN poetry install
+
+
+CMD ["poetry","run","uvicorn", "web-app.server:app", "--host", "0.0.0.0", "--port", "8000"]
+

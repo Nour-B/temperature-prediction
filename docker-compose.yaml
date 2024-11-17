@@ -14,7 +14,7 @@ services:
     container_name: local-mlflow-tracking-server
     build:
       context: .
-      dockerfile: ./docker/dockerfile
+      dockerfile: ./docker/dockerfile_mlflow
       args:
         USER_NAME: ${USER_NAME}
         USER_ID: ${USER_ID}
@@ -28,6 +28,20 @@ services:
       - mlflow-postgres-db
     volumes:
       - mlflow-artifact-store:${MLFLOW_ARTIFACT_STORE}
+
+  fastapi-server:
+    image: fastapi-server
+    container_name: fastapi-server
+    build:
+      context: .
+      dockerfile: ./docker/dockerfile_fastapi
+      args:
+        USER_NAME: ${USER_NAME}
+        USER_ID: ${USER_ID}
+    ports:
+      - 8000:8000
+  
+  
     ipc: host
     init: true
   

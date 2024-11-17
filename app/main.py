@@ -31,7 +31,7 @@ def main():
         
         # Evaluate the model
         predictor = Predictor()
-        predictor.evaluate_model(X_test, y_test)
+        predictor.evaluate_model_mlflow(X_test, y_test)
         logging.info("Model evaluation completed successfully")
 
         
