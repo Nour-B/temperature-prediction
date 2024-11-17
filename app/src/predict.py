@@ -47,24 +47,24 @@ class Predictor:
 
 
             metric = {
-                    "root_mean_squared_error": root_mean_squared_error,
-                    "mean_squared_error": mean_squared_error,
-                    "mean_absolute_error": mean_absolute_error
-                }[self.metric_name]
+                "root_mean_squared_error": root_mean_squared_error,
+                "mean_squared_error": mean_squared_error,
+                "mean_absolute_error": mean_absolute_error
+            }[self.metric_name]
 
             for m in self.models:
                 model = self.load_model(m.store_path, m.store_filename)
                 y_pred = model.predict(X_test)
-                metric = metric(y_test, y_pred)
+                met = metric(y_test, y_pred)
                 # Print evaluation results
                 print("\n============= Model Evaluation Results ==============")
                 print(f"Model: {m.name}")
-                print(f"Metric: {metric:.4f}")
+                print(f"{self.metric_name}: {float(met)}")
                 print("=====================================================\n")
-                
-                # Log performance 
+                    
+                    # Log performance 
                 mlflow.log_params(m.params)
-                mlflow.log_metric("rmse" + "_" + m.name, metric)
+                mlflow.log_metric("rmse" + "_" + m.name, met)
                 mlflow.sklearn.log_model(model, m.name)
 
 
