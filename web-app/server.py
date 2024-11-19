@@ -1,7 +1,9 @@
-from pydantic import BaseModel
-from fastapi import FastAPI
 import joblib
 import pandas as pd
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+
 
 class Temperature(BaseModel):
     month: int
@@ -13,24 +15,32 @@ class Temperature(BaseModel):
 
 
 app = FastAPI()
-dtr_model = joblib.load('models/DecisionTreeRegressor.pkl')
-lin_reg_model = joblib.load('models/LinearRegression.pkl')
-rfr_model = joblib.load('models/RandomForestRegressor.pkl')
+dtr_model = joblib.load("models/DecisionTreeRegressor.pkl")
+lin_reg_model = joblib.load("models/LinearRegression.pkl")
+rfr_model = joblib.load("models/RandomForestRegressor.pkl")
 
 
-@app.get('/')
+@app.get("/")
 def index():
-    return {'messeage':'Predicting Temperature'}
+    return {"messeage": "Predicting Temperature"}
 
-@app.post('/predict_temperature')
-def predict_temperature(data: Temperature):
-    df = pd.DataFrame([data.dict().values()], 
-                          columns=data.dict().keys())
+
+@app.post("/DecisionTreeRegressor")
+def predict_temperature_dtr_model(data: Temperature):
+    df = pd.DataFrame([data.dict().values()], columns=data.dict().keys())
     pred = dtr_model.predict(df)
     return {"Predicted tempreature": float(pred)}
 
 
+@app.post("/LinearRegression")
+def predict_temperature_lin_reg_model(data: Temperature):
+    df = pd.DataFrame([data.dict().values()], columns=data.dict().keys())
+    pred = lin_reg_model.predict(df)
+    return {"Predicted tempreature": float(pred)}
 
 
-
-
+@app.post("/RandomForestRegressor")
+def predict_temperature_rfr_model(data: Temperature):
+    df = pd.DataFrame([data.dict().values()], columns=data.dict().keys())
+    pred = rfr_model.predict(df)
+    return {"Predicted tempreature": float(pred)}

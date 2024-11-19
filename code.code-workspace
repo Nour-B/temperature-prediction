@@ -1,0 +1,34 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
+        "python.testing.pytestArgs": [
+            "."
+        ],
+        "flake8.path": ["${workspaceFolder}/.venv/bin/flake8"],
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "black-formatter.path": ["${workspaceFolder}/.venv/bin/black"],
+        "isort.args": [
+            "--profile",
+            "black"
+        ], 
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.isort",
+            "ms-python.black-formatter",
+            "ms-python.flake8",
+            "ms-python.python",
+            "github.vscode-github-actions",
+
+        ]
+    }
+}
