@@ -3,6 +3,14 @@ name: parallel
 on:
   push:
 
+env:
+  PROJECT_ID: temperature-predictor-441809
+  IMAGE_PREFIX: temperature-prediction-fastapiserver # image name
+  IMAGE_TAG: latest # image tag
+  AR_ZONE: europe-west4 # artifact registry zone
+  AR_REPO: temperature-prediction # artifact registry repository
+    
+
 jobs:
   name:
     strategy:
