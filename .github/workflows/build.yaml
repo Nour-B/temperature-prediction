@@ -33,14 +33,15 @@ jobs:
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$AR_ZONE-docker.pkg.dev
 
       # Build the Docker image
-      - name: Build
+      - name: Build ${{matrix.layers}} docker image
         run: |-
+          pwd
           docker build \
             --tag "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/temperature-prediction-${{matrix.layers}}:$IMAGE_TAG" \
-            --file ./docker/dockerfile_${{matrix.layers}}  \
+            --file ./docker/dockerfile_${{matrix.layers}} \
             .
       # Push the Docker image to Google Artifact Registry
-      - name: Push
+      - name: Push ${{matrix.layers}} docker image
         run:
           docker push "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/temperature-prediction-${{matrix.layers}}:$IMAGE_TAG"
         
