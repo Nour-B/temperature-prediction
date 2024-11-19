@@ -1,0 +1,43 @@
+
+name: parallel
+on:
+  push:
+
+jobs:
+  name:
+    strategy:
+      matrix:
+        layers: ["fastapi", "mlflow"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Auth gcloud SDK
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY }}'
+
+      - name: Docker auth
+        run: |-
+          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$AR_ZONE-docker.pkg.dev
+
+      # Build the Docker image
+      - name: Build
+        run: |-
+          docker build \
+            --tag "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/temperature-prediction-${{matrix.layers}}:$IMAGE_TAG" \
+            --file docker/dockerfile_${{matrix.layers}}
+            .
+      # Push the Docker image to Google Artifact Registry
+      - name: Push
+        run: |-
+          docker push "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/temperature-prediction-${{matrix.layers}}:$IMAGE_TAG"
+        
+  
