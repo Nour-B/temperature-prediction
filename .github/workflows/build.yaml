@@ -41,8 +41,7 @@ jobs:
             .
       # Push the Docker image to Google Artifact Registry
       - name: Push
-        run: |-
+        run:
           docker push "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/temperature-prediction-${{matrix.layers}}:$IMAGE_TAG"
-          .
         
   
