@@ -5,7 +5,6 @@ on:
 
 env:
   PROJECT_ID: temperature-predictor-441809
-  IMAGE_PREFIX: temperature-prediction-fastapiserver # image name
   IMAGE_TAG: latest # image tag
   AR_ZONE: europe-west4 # artifact registry zone
   AR_REPO: temperature-prediction # artifact registry repository
@@ -22,9 +21,6 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v2'
         with:
           version: '>= 363.0.0'
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
 
       - name: Auth gcloud SDK
         id: 'auth'
@@ -47,5 +43,6 @@ jobs:
       - name: Push
         run: |-
           docker push "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/temperature-prediction-${{matrix.layers}}:$IMAGE_TAG"
+          .
         
   
