@@ -41,6 +41,8 @@ jobs:
           ls -l
           docker build \
             --tag "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/temperature-prediction-${{matrix.layers}}:$IMAGE_TAG" \
+            --build-arg USER_NAME="nour"
+            --build-arg USER_ID=500
             --file ./docker/dockerfile_${{matrix.layers}} \
             .
       # Push the Docker image to Google Artifact Registry
