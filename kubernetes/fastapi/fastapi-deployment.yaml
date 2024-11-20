@@ -20,6 +20,6 @@ spec:
             imagePullPolicy: Always
             ports:
               - ContainerPort: 8000
-          imagePullSecrets:
-            - name: gcr-creds
+        imagePullSecrets:
+          - name: gcr-creds
 
