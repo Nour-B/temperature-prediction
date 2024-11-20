@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployement
+kind: Deployment
 metadata: 
   name: fastapi-deployment
   labels: 
@@ -9,17 +9,18 @@ spec:
   selector: 
     matchLabels:
       app: fastapi
-    template:
-      metadata:
-        labels:
-          app: fastapi
-      spec:
-        containers:
-          - name: fastapi
-            image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-fastapi:latest
-            imagePullPolicy: Always
-            ports:
-              - ContainerPort: 8000
-        imagePullSecrets:
-          - name: gcr-creds
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      imagePullSecrets:
+        - name: gcr-creds
+      containers:
+        - name: fastapi
+          image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-fastapi:latest
+          imagePullPolicy: Always
+          ports:
+          - ContainerPort: 8000
+      
 
