@@ -8,8 +8,8 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: mycluster
   GKE_ZONE: europe-west4-a  # cluster zone
-  IMAGE: temperature-prediction-fastapiserver # image name
-  IMAGE_TAG: EA5636A3-E45A-4A90-AC91-A7EB4A95522B # image tag
+  IMAGE: temperature-prediction-fastapi # image name
+  IMAGE_TAG: latest # image tag
   AR_ZONE: europe-west4 # artifact registry zone
   AR_REPO: temperature-prediction # artifact registry repository
 
@@ -70,7 +70,7 @@ jobs:
       - name: Deploy
         run: |-
           kubectl get secrets gcr-creds || kubectl create secret docker-registry gcr-creds --docker-username=oauth2accesstoken --docker-password=$(gcloud auth print-access-token)
-          kubectl apply -f kubernetes/
+          kubectl apply -f kubernetes/fastapi
           kubectl get pods
 
 
