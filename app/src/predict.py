@@ -1,4 +1,5 @@
 import os
+
 import joblib
 import mlflow
 import logging
@@ -9,7 +10,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(levelname)s:%(mess
 
 
 class Predictor:
-
     def __init__(self):
         self.config = OmegaConf.load("./app/configs/config.yaml")
         self.models = self.config.models
@@ -23,7 +23,8 @@ class Predictor:
         metric = {
             "root_mean_squared_error": root_mean_squared_error,
             "mean_squared_error": mean_squared_error,
-            "mean_absolute_error": mean_absolute_error}[self.metric_name]
+            "mean_absolute_error": mean_absolute_error,
+        }[self.metric_name]
 
         for m in self.models:
             model = self.load_model(m.store_path, m.store_filename)

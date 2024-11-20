@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temp_pred
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: temperatureprediction
+  template:
+    metadata:
+      labels:
+        app: temperatureprediction
+    spec:
+      imagePullSecrets:
+        - name: gcr-creds
+      containers:
+      - name: temperatureprediction
+        image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-fastapi:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
