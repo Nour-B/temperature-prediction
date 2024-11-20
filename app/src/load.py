@@ -2,7 +2,6 @@ import pandas as pd
 
 from omegaconf import OmegaConf
 
-
 class Loader:
     def __init__(self):
         self.config = OmegaConf.load("./app/configs/config.yaml")

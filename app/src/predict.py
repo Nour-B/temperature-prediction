@@ -1,12 +1,12 @@
+import logging
 import os
 
 import joblib
 import mlflow
-import logging
 
-from sklearn.metrics import mean_absolute_error, root_mean_squared_error, mean_squared_error
 from omegaconf import OmegaConf
-logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 
 
 class Predictor:
@@ -44,7 +44,7 @@ class Predictor:
             metric = {
                 "root_mean_squared_error": root_mean_squared_error,
                 "mean_squared_error": mean_squared_error,
-                "mean_absolute_error": mean_absolute_error
+                "mean_absolute_error": mean_absolute_error,
             }[self.metric_name]
 
             for m in self.models:
