@@ -5,6 +5,7 @@ import joblib
 import mlflow
 
 from omegaconf import OmegaConf
+from sklearn.metrics import mean_absolute_error, mean_squared_error, root_mean_squared_error
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 
