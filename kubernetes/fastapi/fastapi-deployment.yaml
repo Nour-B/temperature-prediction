@@ -21,6 +21,6 @@ spec:
           image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-fastapi:latest
           imagePullPolicy: Always
           ports:
-          - ContainerPort: 8000
+          - containerPort: 8000
       
 
