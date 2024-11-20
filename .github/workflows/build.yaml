@@ -2,6 +2,8 @@
 name: parallel
 on:
   push:
+    branches:
+      - main
 
 env:
   PROJECT_ID: temperature-predictor-441809

@@ -56,6 +56,7 @@ jobs:
         run: |-
           docker build \
             --tag "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/$IMAGE:$IMAGE_TAG" \
+            --file ./docker/dockerfile_fastapi \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
             --build-arg USER_NAME="nour" \
