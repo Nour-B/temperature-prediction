@@ -8,6 +8,12 @@ ARG GITHUB_REF
 ENV HOME=/home/${USER_NAME}
 ENV PATH=$PATH:${HOME}/.local/bin
 
+# Poetry envs
+ENV POETRY_NO_INTERACTION=true \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_VIRTUALENVS_CREATE=true \
+    POETRY_CACHE_DIR=/tmp/poetry_cahe
+
 RUN apt-get -qq update \
     && apt-get -qq -y install curl
 
@@ -23,13 +29,14 @@ USER ${USER_NAME}
 RUN mkdir -p ${HOME}/app 
 
 WORKDIR ${HOME}/app
+
+COPY pyproject.toml  poetry.lock ./
+
+RUN poetry install --without dev --no-root && rm -rf ${POETRY_CACHE_DIR}
 COPY . .
 #add web-app and models directory
 COPY web-app/ ./web-app
 COPY models/ ./models/
-
-RUN poetry install
-
 
 CMD ["poetry","run","uvicorn", "web-app.server:app", "--host", "0.0.0.0", "--port", "8000"]
 

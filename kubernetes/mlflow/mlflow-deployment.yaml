@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      imagePullSecrets:
+        - name: gcr-creds
+      containers:
+      - name: mlflow
+        image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-mlflow:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+         - name: MLFLOW_ARTIFACT_STORE
+           value: gs://mlflow-artifact-store1

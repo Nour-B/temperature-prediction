@@ -9,6 +9,13 @@ ARG MLFLOW_ARTIFACT_STORE
 ENV HOME=/home/${USER_NAME}
 ENV PATH=$PATH:${HOME}/.local/bin
 
+# Poetry envs
+ENV POETRY_NO_INTERACTION=true \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_VIRTUALENVS_CREATE=true \
+    POETRY_CACHE_DIR=/tmp/poetry_cahe
+
+
 RUN apt-get -qq update \
     && apt-get -qq -y install curl
 
@@ -26,9 +33,12 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 USER ${USER_NAME}
  
 WORKDIR ${HOME}/app
-COPY . .
 
-RUN poetry install
+COPY pyproject.toml  poetry.lock ./
+
+RUN poetry install --without dev --no-root && rm -rf ${POETRY_CACHE_DIR}
+
+COPY . .
 
 
 CMD ["/startup-script.sh"]
