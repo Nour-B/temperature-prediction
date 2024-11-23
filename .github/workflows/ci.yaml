@@ -69,7 +69,7 @@ jobs:
       - name: Deploy
         run: |-
           kubectl get secrets gcr-creds || kubectl create secret docker-registry gcr-creds --docker-username=oauth2accesstoken --docker-password=$(gcloud auth print-access-token)
-          kubectl apply -f kubernetes
+          kubectl apply -f kubernetes/
           kubectl get pods
 
 
