@@ -8,7 +8,7 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: mycluster
   GKE_ZONE: europe-west4-a  # cluster zone
-  IMAGE: temperature-prediction-fastapi # image name
+  IMAGE: temperature-prediction # image name
   IMAGE_TAG: latest # image tag
   AR_ZONE: europe-west4 # artifact registry zone
   AR_REPO: temperature-prediction # artifact registry repository
@@ -16,6 +16,9 @@ env:
 jobs:
   setup-build-push-deploy:
     name: Setup, Build, Push, and Deploy
+    strategy:
+      matrix:
+        layers: ["fastapi", "mlflow"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,11 +50,11 @@ jobs:
           location: ${{ env.GKE_ZONE }}
 
       # Build the Docker image
-      - name: Build
+      - name: Build ${{matrix.layers}} docker image
         run: |-
           docker build \
-            --tag "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/$IMAGE:$IMAGE_TAG" \
-            --file ./docker/dockerfile_fastapi \
+            --tag "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/$IMAGE-${{matrix.layers}}:$IMAGE_TAG" \
+            --file ./docker/dockerfile_${{matrix.layers}} \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
             --build-arg USER_NAME="nour" \
@@ -60,7 +63,7 @@ jobs:
       # Push the Docker image to Google Artifact Registry
       - name: Push
         run: |-
-          docker push "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/$IMAGE:$IMAGE_TAG"
+          docker push "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/$IMAGE-${{matrix.layers}}:$IMAGE_TAG"
 
       # Deploy the Docker image to the GKE cluster
       - name: Deploy

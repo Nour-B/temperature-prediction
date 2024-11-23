@@ -4,33 +4,41 @@ ARG USER_ID
 ARG USER_NAME
 ARG GITHUB_SHA
 ARG GITHUB_REF
-ARG MLFLOW_ARTIFACT_STORE
+#ARG MLFLOW_ARTIFACT_STORE
 
-ENV HOME=/home/${USER_NAME}
-ENV PATH=$PATH:${HOME}/.local/bin
+ENV HOME=/home/${USER_NAME} 
+ENV PATH=$PATH:${HOME}/.local/bin:/usr/local/gcloud/google-cloud-sdk/bin
 
 # Poetry envs
 ENV POETRY_NO_INTERACTION=true \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     POETRY_VIRTUALENVS_CREATE=true \
-    POETRY_CACHE_DIR=/tmp/poetry_cahe
+    POETRY_CACHE_DIR=/tmp/poetry_cache
 
 
 RUN apt-get -qq update \
     && apt-get -qq -y install curl
 
-RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} 
+RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-426.0.0-linux-x86_64.tar.gz > /tmp/google-cloud-sdk.tar.gz
+RUN mkdir -p /usr/local/gcloud \
+    && tar -C /usr/local/gcloud -xf /tmp/google-cloud-sdk.tar.gz \
+    && /usr/local/gcloud/google-cloud-sdk/install.sh --usage-reporting false --command-completion true --bash-completion true --path-update true --quiet
+
+RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} && \
+    chown -R ${USER_ID} ${HOME}
 
 COPY ./docker/scripts/* /
 RUN chown -R ${USER_NAME} /*.sh && chmod +x /*.sh
 
-RUN mkdir -p ${HOME}/app ${MLFLOW_ARTIFACT_STORE} 
-RUN chown -R ${USER_NAME} ${HOME}/app ${MLFLOW_ARTIFACT_STORE} 
+RUN mkdir -p ${HOME}/app
+#${MLFLOW_ARTIFACT_STORE} 
+RUN chown -R ${USER_NAME} ${HOME}/app
+#${MLFLOW_ARTIFACT_STORE} 
 
-
-RUN curl -sSL https://install.python-poetry.org | python3 -
 
 USER ${USER_NAME}
+
+RUN pip install poetry
  
 WORKDIR ${HOME}/app
 

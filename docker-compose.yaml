@@ -18,7 +18,7 @@ services:
       args:
         USER_NAME: ${USER_NAME}
         USER_ID: ${USER_ID}
-        MLFLOW_ARTIFACT_STORE: ${MLFLOW_ARTIFACT_STORE}
+        #MLFLOW_ARTIFACT_STORE: ${MLFLOW_ARTIFACT_STORE}
     ports:
       - 8080:8080
     env_file:
@@ -27,7 +27,8 @@ services:
     depends_on:
       - mlflow-postgres-db
     volumes:
-      - mlflow-artifact-store:${MLFLOW_ARTIFACT_STORE}
+      - ~/.config/gcloud/:/home/${USER_NAME}/.config/gcloud
+    #  - mlflow-artifact-store:${MLFLOW_ARTIFACT_STORE}
 
   fastapi-server:
     image: fastapi-server
@@ -48,6 +49,6 @@ services:
 
 volumes:
   postgres-mlflow-data:
-  mlflow-artifact-store:
+  #mlflow-artifact-store:
     
 

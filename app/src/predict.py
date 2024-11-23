@@ -58,7 +58,6 @@ class Predictor:
                 print(f"Model: {m.name}")
                 print(f"{self.metric_name}: {float(met)}")
                 print("=====================================================\n")
-
                 # Log performance
                 mlflow.log_params(m.params)
                 mlflow.log_metric("rmse" + "_" + m.name, met)
