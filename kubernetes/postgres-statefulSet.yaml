@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mlflow-postgres-statefulSet
+  name: mlflow-postgres-statefulset
 spec:
   selector:
     matchLabels:
@@ -24,7 +24,7 @@ spec:
           mountPath: /var/lib/postgresql/data
         envFrom:
         - secretRef:
-          name: postgres
+            name: postgres
   volumeClaimTemplates:
   - metadata:
       name: postgres-volume
