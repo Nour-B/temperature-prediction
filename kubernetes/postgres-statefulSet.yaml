@@ -21,7 +21,7 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - name: postgres-volume
-          mountPath: /var/lib/postgresql/data
+          mountPath: /var/lib/postgresql/data/mlflow-db
         envFrom:
         - secretRef:
             name: postgres
