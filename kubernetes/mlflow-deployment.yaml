@@ -22,3 +22,14 @@ spec:
         env:
          - name: MLFLOW_ARTIFACT_STORE
            value: gs://mlflow-artifact-store1
+         - name: GOOGLE_APPLICATION_CREDENTIALS
+           value: "/etc/mlflow/credentials.json"
+        volumeMounts: 
+        - name: mlflow-server-secret
+          readOnly: true
+          mountPath: "/etc/mlflow"
+      volumes:
+        - name: mlflow-server-secret
+          secret:
+            secretName: mlflow-server-secret
+

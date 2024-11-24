@@ -57,7 +57,7 @@ jobs:
             --file ./docker/dockerfile_${{matrix.layers}} \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
-            --build-arg USER_NAME="nour" \
+            --build-arg USER_NAME="mlops" \
             --build-arg USER_ID=500 \
             .
       # Push the Docker image to Google Artifact Registry

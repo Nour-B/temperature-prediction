@@ -38,7 +38,7 @@ class Predictor:
             print("=====================================================\n")
 
     def evaluate_model_mlflow(self, X_test, y_test):
-        mlflow.set_tracking_uri("http://localhost:8080")
+        mlflow.set_tracking_uri("http://34.147.71.252:8080")
         mlflow.set_experiment("Predicting Temperature in London")
 
         with mlflow.start_run() as run:
