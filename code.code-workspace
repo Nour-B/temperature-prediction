@@ -7,9 +7,6 @@
     "settings": {
         "python.defaultInterpreterPath": "/Users/nati/Library/Caches/pypoetry/virtualenvs/temperature-predictor-DY7arR5Z-py3.11/bin/python",
         "python.testing.pytestPath": "/Users/nati/Library/Caches/pypoetry/virtualenvs/temperature-predictor-DY7arR5Z-py3.11/bin/pytest",
-        "python.testing.pytestArgs": [
-            "."
-        ],
         "flake8.path": ["/Users/nati/Library/Caches/pypoetry/virtualenvs/temperature-predictor-DY7arR5Z-py3.11/bin/flake8"],
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
@@ -20,7 +17,12 @@
         ], 
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
-        }
+        },
+        "python.testing.pytestArgs": [
+            "."
+        ],
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestEnabled": true
     },
     "extensions": {
         "recommendations": [

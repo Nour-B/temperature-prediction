@@ -2,7 +2,6 @@ import os
 
 import joblib
 
-from omegaconf import OmegaConf
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression
@@ -13,9 +12,10 @@ from sklearn.tree import DecisionTreeRegressor
 
 
 class Trainer:
-    def __init__(self):
-        self.config = OmegaConf.load("./app/configs/config.yaml")
-        self.models = self.config.models
+    def __init__(self, models, test_size, random_state):
+        self.models = models
+        self.test_size = test_size
+        self.random_state = random_state
 
     def prepare_data(self, data):
         feature_selection = ["month", "cloud_cover", "sunshine", "precipitation", "pressure", "global_radiation"]
@@ -27,7 +27,7 @@ class Trainer:
 
         # Split the data
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=self.config.train.test_size, random_state=self.config.train.random_state
+            X, y, test_size=self.test_size, random_state=self.random_state
         )
 
         # Impute missing values and scale the data
@@ -39,7 +39,7 @@ class Trainer:
         # Transform on the test data
         X_test = pipeline.transform(X_test)
 
-        return X_train, X_test, y_train, y_test
+        return X, y, X_train, X_test, y_train, y_test
 
     def train_save_models(self, X_train, y_train):
         model_map = {

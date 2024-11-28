@@ -2,40 +2,40 @@ import logging
 import os
 
 import joblib
+
+from sklearn.metrics import mean_absolute_error, mean_squared_error, root_mean_squared_error
+
 import mlflow
 
-from omegaconf import OmegaConf
-from sklearn.metrics import mean_absolute_error, mean_squared_error, root_mean_squared_error
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 
 
 class Predictor:
-    def __init__(self):
-        self.config = OmegaConf.load("./app/configs/config.yaml")
-        self.models = self.config.models
-        self.metric_name = self.config.evaluate.metric
+    def __init__(self, models, metric_name):
+        self.models = models
+        self.metric_name = metric_name
 
     def load_model(self, model_path, model_name):
         model_file_path = os.path.join(model_path, model_name)
         return joblib.load(model_file_path)
 
-    def evaluate_model(self, X_test, y_test):
-        metric = {
-            "root_mean_squared_error": root_mean_squared_error,
-            "mean_squared_error": mean_squared_error,
-            "mean_absolute_error": mean_absolute_error,
-        }[self.metric_name]
+    # def evaluate_model(self, X_test, y_test):
+    #     metric = {
+    #         "root_mean_squared_error": root_mean_squared_error,
+    #         "mean_squared_error": mean_squared_error,
+    #         "mean_absolute_error": mean_absolute_error,
+    #     }[self.metric_name]
 
-        for m in self.models:
-            model = self.load_model(m.store_path, m.store_filename)
-            y_pred = model.predict(X_test)
-            met = metric(y_test, y_pred)
-            # Print evaluation results
-            print("\n============= Model Evaluation Results ==============")
-            print(f"Model: {m.name}")
-            print(f"{self.metric_name}: {float(met)}")
-            print("=====================================================\n")
+    #     for m in self.models:
+    #         model = self.load_model(m.store_path, m.store_filename)
+    #         y_pred = model.predict(X_test)
+    #         met = metric(y_test, y_pred)
+    #         # Print evaluation results
+    #         print("\n============= Model Evaluation Results ==============")
+    #         print(f"Model: {m.name}")
+    #         print(f"{self.metric_name}: {float(met)}")
+    #         print("=====================================================\n")
 
     def evaluate_model_mlflow(self, X_test, y_test):
         mlflow.set_tracking_uri("http://34.147.71.252:8080")

@@ -14,7 +14,7 @@ DOCKER_IMAGE_NAME = fastapi-server
 GCP_DOCKER_IMAGE_NAME = europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-fastapiserver
 GCP_DOCKER_IMAGE_TAG := $(strip $(shell uuidgen))
 
-
+DIRS_TO_VALIDATE= app tests web-app
 
 # Run the pipeline 
 run_pipeline: 
@@ -43,10 +43,10 @@ push: build
 	docker tag "$(DOCKER_IMAGE_NAME)":latest "$(GCP_DOCKER_IMAGE_NAME):$(GCP_DOCKER_IMAGE_TAG)"
 	docker push "$(GCP_DOCKER_IMAGE_NAME):$(GCP_DOCKER_IMAGE_TAG)"
 
-## Run the unit tests	
+## Run unit tests	
 unit-test:
 	PYTHONPATH=. poetry run pytest
 
 ## Lint code using flake8
 lint:
-	flake8 .
+	$(foreach dir, $(DIRS_TO_VALIDATE), flake8 $(dir);)

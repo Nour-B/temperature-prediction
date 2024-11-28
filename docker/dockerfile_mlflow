@@ -4,17 +4,10 @@ ARG USER_ID
 ARG USER_NAME
 ARG GITHUB_SHA
 ARG GITHUB_REF
-#ARG MLFLOW_ARTIFACT_STORE
+
 
 ENV HOME=/home/${USER_NAME} 
 ENV PATH=$PATH:${HOME}/.local/bin:/usr/local/gcloud/google-cloud-sdk/bin
-
-# Poetry envs
-ENV POETRY_NO_INTERACTION=true \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    POETRY_VIRTUALENVS_CREATE=true \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
-
 
 RUN apt-get -qq update \
     && apt-get -qq -y install curl
@@ -27,28 +20,21 @@ RUN mkdir -p /usr/local/gcloud \
 RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} && \
     chown -R ${USER_ID} ${HOME}
 
-COPY ./docker/scripts/* /
-RUN chown -R ${USER_NAME} /*.sh && chmod +x /*.sh
-
 RUN mkdir -p ${HOME}/app
-#${MLFLOW_ARTIFACT_STORE} 
-RUN chown -R ${USER_NAME} ${HOME}/app
-#${MLFLOW_ARTIFACT_STORE} 
 
+RUN chown -R ${USER_NAME} ${HOME}/app
+
+
+COPY ./docker/scripts/start-mlflow-tracking-server.sh ${HOME}/app/
+
+RUN chmod +x  ${HOME}/app/start-mlflow-tracking-server.sh
 
 USER ${USER_NAME}
 
-RUN pip install poetry
+RUN pip install mlflow==2.5.0 psycopg2-binary~=2.9 google-cloud-storage~=2.18
  
 WORKDIR ${HOME}/app
 
-COPY pyproject.toml  poetry.lock ./
-
-RUN poetry install --without dev --no-root && rm -rf ${POETRY_CACHE_DIR}
-
-COPY . .
-
-
-CMD ["/startup-script.sh"]
+CMD ["./start-mlflow-tracking-server.sh"]
 
 
