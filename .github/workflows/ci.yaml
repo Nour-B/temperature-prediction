@@ -34,7 +34,7 @@ jobs:
     
       - name: Unit-test
         run: |-
-          make unit-tests
+          make unit-test
   build:
     name: Setup, Build, Push
     needs: test
