@@ -16,12 +16,12 @@ GCP_DOCKER_IMAGE_TAG := $(strip $(shell uuidgen))
 
 DIRS_TO_VALIDATE= app tests web-app
 
-# Run the pipeline 
-run_pipeline: 
-	@python3 ./app/main.py 
+# Run the pipeline
+run_pipeline:
+	@python3 ./app/main.py
 	
 build:
-	docker compose build
+		docker compose build
 
 up:
 	docker compose up 

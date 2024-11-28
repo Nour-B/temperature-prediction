@@ -1,0 +1,2 @@
+MLFLOW_BACKEND_STORE=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@mlflow-backend-store/${POSTGRES_DB}
+MLFLOW_ARTIFACT_STORE=gs://mlflow-artifact-store1
