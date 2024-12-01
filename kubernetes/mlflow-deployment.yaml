@@ -17,11 +17,35 @@ spec:
       - name: mlflow
         image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-mlflow:latest
         imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         ports:
         - containerPort: 8080
         env:
          - name: MLFLOW_ARTIFACT_STORE
            value: gs://mlflow-artifact-store1
+         - name: DB_HOST
+           value: mlflow-postgress-service
+         - name: POSTGRES_USER
+           valueFrom: 
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+         - name: POSTGRES_PASSWORD
+           valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD
+         - name: POSTGRES_DB
+           valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_DB
          - name: GOOGLE_APPLICATION_CREDENTIALS
            value: "/etc/mlflow/credentials.json"
         volumeMounts: 
