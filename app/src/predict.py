@@ -2,11 +2,9 @@ import logging
 import os
 
 import joblib
-
-from sklearn.metrics import mean_absolute_error, mean_squared_error, root_mean_squared_error
-
 import mlflow
 
+from sklearn.metrics import mean_absolute_error, mean_squared_error, root_mean_squared_error
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 
@@ -38,7 +36,7 @@ class Predictor:
     #         print("=====================================================\n")
 
     def evaluate_model_mlflow(self, X_test, y_test):
-        mlflow.set_tracking_uri("http://34.147.71.252:8080")
+        mlflow.set_tracking_uri(os.environ["TRACKING_URI"])
         mlflow.set_experiment("Predicting Temperature in London")
 
         with mlflow.start_run() as run:

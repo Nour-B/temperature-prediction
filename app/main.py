@@ -1,4 +1,7 @@
 import logging
+import os
+
+import functions_framework
 
 from omegaconf import OmegaConf
 from src.clean import Cleaner
@@ -9,9 +12,12 @@ from src.train import Trainer
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 
 
-def main():
+@functions_framework.cloud_event
+def main(request):
+    print(request)
     # Load the config
-    config = OmegaConf.load("app/configs/config.yaml")
+    with open(f"{os.path.abspath(os.path.dirname(__file__))}/configs/config.yaml") as conf:
+        config = OmegaConf.load(conf)
 
     # Load the raw data
     raw_data = Loader(config.data.raw_data_path).load_data()

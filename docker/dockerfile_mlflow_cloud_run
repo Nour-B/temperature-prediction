@@ -1,0 +1,37 @@
+FROM python:3.11-slim
+
+ARG USER_ID
+ARG USER_NAME
+ARG GITHUB_SHA
+ARG GITHUB_REF
+
+
+ENV HOME=/home/${USER_NAME} 
+ENV PATH=$PATH:${HOME}/.local/bin:/usr/local/gcloud/google-cloud-sdk/bin
+
+RUN apt-get -qq update \
+    && apt-get -qq -y install curl
+
+# RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-426.0.0-linux-x86_64.tar.gz > /tmp/google-cloud-sdk.tar.gz
+# RUN mkdir -p /usr/local/gcloud \
+#     && tar -C /usr/local/gcloud -xf /tmp/google-cloud-sdk.tar.gz \
+#     && /usr/local/gcloud/google-cloud-sdk/install.sh --usage-reporting false --command-completion true --bash-completion true --path-update true --quiet
+
+RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} && \
+    chown -R ${USER_ID} ${HOME}
+
+RUN mkdir -p ${HOME}/app
+
+WORKDIR ${HOME}/app
+
+COPY app .
+
+RUN chown -R ${USER_NAME}:${USER_NAME} ${HOME}/app
+
+USER ${USER_NAME}
+
+RUN pip install -r requirements.txt
+
+CMD ["python", "main.py"]
+
+
