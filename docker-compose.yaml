@@ -12,13 +12,14 @@ services:
   mlflow-tracking-server:
     image: local-mlflow-tracking-server
     container_name: local-mlflow-tracking-server
+    #entrypoint: ["sleep", "1000000000"]
+    #user: root
     build:
       context: .
       dockerfile: ./docker/dockerfile_mlflow
       args:
         USER_NAME: ${USER_NAME}
-        USER_ID: ${USER_ID}
-        
+        USER_ID: ${USER_ID}   
     ports:
       - 8080:8080
     env_file:

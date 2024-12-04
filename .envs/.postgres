@@ -1,3 +1,5 @@
 POSTGRES_DB=mlflow
 POSTGRES_USER=mlflow
 POSTGRES_PASSWORD=mlflow
+DB_HOST=mlflow-backend-store
+

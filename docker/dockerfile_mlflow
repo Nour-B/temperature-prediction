@@ -10,7 +10,7 @@ ENV HOME=/home/${USER_NAME}
 ENV PATH=$PATH:${HOME}/.local/bin:/usr/local/gcloud/google-cloud-sdk/bin
 
 RUN apt-get -qq update \
-    && apt-get -qq -y install curl
+    && apt-get -qq -y install curl gettext-base
 
 RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-426.0.0-linux-x86_64.tar.gz > /tmp/google-cloud-sdk.tar.gz
 RUN mkdir -p /usr/local/gcloud \
@@ -34,6 +34,10 @@ USER ${USER_NAME}
 RUN pip install mlflow==2.5.0 psycopg2-binary~=2.9 google-cloud-storage~=2.18
  
 WORKDIR ${HOME}/app
+
+#COPY ./.envs/my_auth_config.ini /tmp/
+
+#ENV MLFLOW_AUTH_CONFIG_PATH=${HOME}/app/my_auth_config.ini
 
 CMD ["./start-mlflow-tracking-server.sh"]
 

@@ -42,7 +42,7 @@ spec:
          - name: MLFLOW_ARTIFACT_STORE
            value: gs://mlflow-artifact-store1
          - name: DB_HOST
-           value: mlflow-postgress-service
+           value: mlflow-postgres-service
          - name: POSTGRES_USER
            valueFrom: 
             secretKeyRef:
