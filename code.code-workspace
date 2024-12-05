@@ -22,7 +22,10 @@
             "."
         ],
         "python.testing.unittestEnabled": false,
-        "python.testing.pytestEnabled": true
+        "python.testing.pytestEnabled": true,
+        "[jsonc]": {
+            "editor.defaultFormatter": "vscode.json-language-features"
+        }
     },
     "extensions": {
         "recommendations": [

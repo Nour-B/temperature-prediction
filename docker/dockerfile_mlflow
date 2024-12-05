@@ -31,7 +31,7 @@ RUN chmod +x  ${HOME}/app/start-mlflow-tracking-server.sh
 
 USER ${USER_NAME}
 
-RUN pip install mlflow==2.5.0 psycopg2-binary~=2.9 google-cloud-storage~=2.18
+RUN pip install mlflow==2.18.0 psycopg2-binary~=2.9 google-cloud-storage~=2.18
  
 WORKDIR ${HOME}/app
 

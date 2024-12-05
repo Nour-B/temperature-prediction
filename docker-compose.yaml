@@ -6,6 +6,8 @@ services:
     image: postgres:14
     env_file:
       - .envs/.postgres
+    ports:
+      - 5432:5432
     volumes:
       - postgres-mlflow-data:/var/lib/postgresql/data
   
@@ -41,10 +43,10 @@ services:
         USER_ID: ${USER_ID}
     ports:
       - 8000:8000
+    env_file:
+      - .envs/.mlflow_auth
     environment:
       - TRACKING_URI=http://local-mlflow-tracking-server:8080
-      - MLFLOW_TRACKING_USERNAME=admin
-      - MLFLOW_TRACKING_PASSWORD=password
     depends_on: 
       - mlflow-tracking-server
   

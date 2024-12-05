@@ -3,6 +3,7 @@
 
 include .envs/.postgres
 include .envs/.mlflow
+include .envs/.mlflow_auth
 COMPOSE_DOCKER_CLI_BUILD=1
 export
 
@@ -18,7 +19,7 @@ DIRS_TO_VALIDATE= app tests web-app
 
 # Run the pipeline
 run_pipeline:
-	@cd ./app && python3 main.py
+	@cd ./app && poetry run python3 main.py
 	
 build:
 	docker compose build
@@ -75,7 +76,9 @@ gcp-cloud-functions:
 	--runtime=python311 \
 	--region=europe-west4 \
 	--source=. \
-	--entry-point=main \
+	--entry-point=run \
 	--trigger-bucket=temperature-prediction-data \
 	--memory=1GiB \
-	--set-env-vars TRACKING_URI="http://34.147.71.252:8080"
+	--set-env-vars TRACKING_URI="http://34.147.71.252:8080" \
+	--set-secrets  'MLFLOW_TRACKING_USERNAME=MLFLOW_TRACKING_USERNAME:1,MLFLOW_TRACKING_PASSWORD=MLFLOW_TRACKING_PASSWORD:1'
+	

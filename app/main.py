@@ -13,9 +13,11 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(mess
 
 
 @functions_framework.cloud_event
-def main(request):
-    print(request)
-    # Load the config
+def run(request):
+    main()
+
+
+def main():
     with open(f"{os.path.abspath(os.path.dirname(__file__))}/configs/config.yaml") as conf:
         config = OmegaConf.load(conf)
 

@@ -1,7 +1,7 @@
 # import joblib
 import os
 
-import mlflow
+import mlflow.sklearn
 import pandas as pd
 
 from fastapi import FastAPI
@@ -29,7 +29,10 @@ def index():
 
 @app.post("/DecisionTreeRegressor")
 def predict_temperature_dtr_model(data: Temperature):
-    dtr_model = mlflow.pyfunc.load_model("runs:/8585b1f562df48aea605f9cace4f70b0/DecisionTreeRegressor")
+    # Load the model from the Model Registry
+    model_name = "DecisionTreeRegressor"
+    model_version = 1
+    dtr_model = mlflow.sklearn.load_model(f"models:/{model_name}/{model_version}")
     df = pd.DataFrame([data.dict().values()], columns=data.dict().keys())
     pred = dtr_model.predict(df)
     return {"Predicted tempreature": float(pred)}
@@ -37,7 +40,9 @@ def predict_temperature_dtr_model(data: Temperature):
 
 @app.post("/LinearRegression")
 def predict_temperature_lin_reg_model(data: Temperature):
-    lin_reg_model = mlflow.pyfunc.load_model("runs:/8585b1f562df48aea605f9cace4f70b0/LinearRegression")
+    model_name = "LinearRegression"
+    model_version = 1
+    lin_reg_model = mlflow.sklearn.load_model(f"models:/{model_name}/{model_version}")
     df = pd.DataFrame([data.dict().values()], columns=data.dict().keys())
     pred = lin_reg_model.predict(df)
     return {"Predicted tempreature": float(pred)}
@@ -45,7 +50,9 @@ def predict_temperature_lin_reg_model(data: Temperature):
 
 @app.post("/RandomForestRegressor")
 def predict_temperature_rfr_model(data: Temperature):
-    rfr_model = mlflow.pyfunc.load_model("runs:/8585b1f562df48aea605f9cace4f70b0/RandomForestRegressor")
+    model_name = "RandomForestRegressor"
+    model_version = 1
+    rfr_model = mlflow.sklearn.load_model(f"models:/{model_name}/{model_version}")
     df = pd.DataFrame([data.dict().values()], columns=data.dict().keys())
     pred = rfr_model.predict(df)
     return {"Predicted tempreature": float(pred)}
