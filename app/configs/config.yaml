@@ -1,7 +1,5 @@
 
 data: 
-  #raw_data_path: ./data/raw/london_weather.csv
-  #clean_data_path: ./data/preprocessed/london_weather.csv
   raw_data_path: gs://temperature-prediction-data/raw_data/london_weather.csv
   clean_data_path: gs://temperature-prediction-preprocessed-data/london_weather.csv
  

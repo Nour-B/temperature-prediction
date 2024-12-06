@@ -3,32 +3,32 @@
 ## About
 
 This is an end-to-end machine learning project that predicts the mean temperature in degrees Celsius using supervised learning techniques. The idea of this project comes from DataCamp platform [(link)](https://app.datacamp.com/learn/projects/predicting_temperature_in_london).
-The project includes data preprocessing, model training, evaluation and model deployment in Production.
+The project includes data preprocessing, model training, evaluation and model deployment in Production. It uses tools for managing dependencies, automation, testing, linting, containerization, and cloud deployment.
 
 
 ## Table of Contents
 - [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
-- [Setup Instructions](#setup-instructions)
-- [Makefile](#makefile)
-- [Testing and Linting](#testing-and-linting)
+- [Setup](#setup)
+- [Development workflow](#development-workflow)
 - [Model Tracking with MLflow](#model-tracking-with-mlflow)
-- [Deploying on Google Cloud Functions](#deploying-on-google-cloud-functions)
-- [FastAPI for Model Servings](#fastapi-for-model-serving)
-- [Running the project Locally](#running-the-project-locally)
+- [CI/CD with GitHub Actions](#ci/cd-with-github-actions)
+- [Google cloud Functions](#google-cloud-functions)
 - [Future Enhancements](#future-enhancements)
 
 
 ## Architecture
 Below is the architecture diagram that illustrates the workflow of the project from data cleaning to model deployment in production
+
 ![Image](docs/project_architecture.png)
 
-## Technologies Used
+## Setup
+
+### Technologies Used
 - Poetry
 - Make
 - Units Tests: pytest
 - Flake8
-- Docker
+- Docker/ Docker compose
 - Kubernetes
 - DVC
 - GitHub Actions
@@ -36,7 +36,21 @@ Below is the architecture diagram that illustrates the workflow of the project f
 - FastAPI
 - MLflow
 
-## Setup Instructions
+### Prerequisites
+Before getting started, ensure you have the following prerequisites:
+- Python 3.11+
+- Poetry
+- Docker
+- kubectl
+- gcloud CLI
+
+Additionally, make sure you have the following accounts and services:
+- GCP account
+- GitHub account
+- GKE cluster set up in GCP
+
+
+### Setup Instructions
 
 1. Clone the repository:
 
@@ -49,34 +63,47 @@ cd temperature-prediction
 ```bash
 poetry install
 ```
+3. Activate the poetry virtual environment:
+```bash
+poetry shell
+```
 
-## Makefile
-The commands used to train, test, deploy the model and run the docker containers locally are listed in the Makefile.
-
-## Testing and Linting
+## Development workflow
+This project uses a Makefile to train, test, deploy the model and run the docker containers locally.
 
 ### Unit  Tests with pytest
 
-Unit tests are in the tests/ directory. To run the tests, use the following command:
+Unit tests are in the tests/ directory. To run the tests:
 ```bash
 make unit-test
 ```
 
 ### Linting with Flake8
+You can lint your code by running the following command:
 ```bash
 make lint
 ```
 
-## Model Tracking with MLflow
+### Running the project Locally:
 
-## Deploying on Google Cloud Functions:
+Ensure the `.envs` directory is configured by replacing the following `Environment variables` with you values:
+- `MLFLOW_ARTIFACT_STORE`: GCS Bucket where models will be stored.
+- `MLFLOW_TRACKING_USERNAME`: User used for MLflow authentication
+- `MLFLOW_TRACKING_PASSWORD`: Password used for MLflow authentication
+- `TRACKING_URI`: MLflow server
+- `POSTGRES_DB`: Database name
+- `POSTGRES_USER`: user used for Postgres authentication
+- `POSTGRES_PASSWORD`: password used for Postgres authentication
+- `DB_HOST`: Host where the database is running
+
+To run the project locally, you can use docker compose to run the services (MLflow tracking sevrer, Postgres and FastAPI app):
 
 ```bash
-make gcp-cloud-functions
+make build
+make up
 ```
-
-## FastAPI for Model Serving
-Once the application is deployed, you can interact with the API via FastAPI.
+### FastAPI
+Now you can interact with the API via FastAPI using this URL: http://localhost:8000.
 
 To predict the mean tempreature, send a POST request to the /DecisionTreeRegressor, /LinearRegression or /RandomForestRegressor endpoints with the appropriate data.
 
@@ -92,14 +119,30 @@ Example:
 }
 ```
 
-## Running the project Localy:
-To run the project locally, you can start the docker containers with docker compose:
+## Model Tracking with MLflow
+This project uses a remote MLflow tracking server with the following configuration:
+- GCS Bucket to store the artifacts (models)
+- PostgreSQL Database to store the metadata (parameters, metrics)
+
+## CI/CD with GitHub Actions
+
+For the CI/CD, GitHub Actions is used. The workflow `.github/workflows/ci-cd.yaml` includes the following steps:
+
+- Lint
+- Run the Unit Tests
+- Build the Docker images and push them to Google Artifact Registry
+- Deploy the application to GKE
+
+The .github/workflows/ci-cd.yml file is configured to automatically run these steps whenever code is pushed to the repository.
+
+## Google cloud Functions
+You can trigger the model training using Google cloud functions by pushing the raw data to GCS Bucket. The function code is stored in the `app` directory. To deploy the function use the following command. Make sure to replace the variables with your values:
+
 ```bash
-make build
-make up
+make gcp-cloud-functions
 ```
-Then you can Access the FastAPI app by opening the browser using http://localhost:8000 URL.
 
 ## Future Enhancements
 - Configure a reverse proxy with SSL certificates to enable HTTPS for the FAST API endpoint and the MLflow.
 - Implement a Kubernetes Ingress for externl Access instead of the service.
+- Use Helm to simplify the Kubernetes deployment
