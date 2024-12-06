@@ -1,0 +1,2 @@
+MLFLOW_ARTIFACT_STORE=gs://mlflow-artifact-store1
+DB_HOST=mlflow-backend-store

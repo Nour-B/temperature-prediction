@@ -6,19 +6,22 @@ services:
     image: postgres:14
     env_file:
       - .envs/.postgres
+    ports:
+      - 5432:5432
     volumes:
       - postgres-mlflow-data:/var/lib/postgresql/data
   
   mlflow-tracking-server:
     image: local-mlflow-tracking-server
     container_name: local-mlflow-tracking-server
+    #entrypoint: ["sleep", "1000000000"]
+    #user: root
     build:
       context: .
       dockerfile: ./docker/dockerfile_mlflow
       args:
         USER_NAME: ${USER_NAME}
-        USER_ID: ${USER_ID}
-        MLFLOW_ARTIFACT_STORE: ${MLFLOW_ARTIFACT_STORE}
+        USER_ID: ${USER_ID}   
     ports:
       - 8080:8080
     env_file:
@@ -27,8 +30,8 @@ services:
     depends_on:
       - mlflow-postgres-db
     volumes:
-      - mlflow-artifact-store:${MLFLOW_ARTIFACT_STORE}
-
+      - ~/.config/gcloud/:/home/${USER_NAME}/.config/gcloud
+    
   fastapi-server:
     image: fastapi-server
     container_name: fastapi-server
@@ -40,6 +43,12 @@ services:
         USER_ID: ${USER_ID}
     ports:
       - 8000:8000
+    env_file:
+      - .envs/.mlflow_auth
+    environment:
+      - TRACKING_URI=http://local-mlflow-tracking-server:8080
+    depends_on: 
+      - mlflow-tracking-server
   
   
     ipc: host
@@ -48,6 +57,6 @@ services:
 
 volumes:
   postgres-mlflow-data:
-  mlflow-artifact-store:
+  
     
 

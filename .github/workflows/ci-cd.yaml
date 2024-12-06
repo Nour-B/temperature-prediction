@@ -1,0 +1,111 @@
+name: CI/CD
+on:
+  push:
+    branches:
+      - test
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: mycluster
+  GKE_ZONE: europe-west4-a  # cluster zone
+  IMAGE: temperature-prediction # image name
+  IMAGE_TAG: latest # image tag
+  AR_ZONE: europe-west4 # artifact registry zone
+  AR_REPO: temperature-prediction # artifact registry repository
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name:
+        run: |-
+          pip install poetry
+          poetry install --no-root
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2
+        with:
+          plugins: "flake8-bugbear==24.10.31 flake8-black"
+    
+      - name: Unit-test
+        run: |-
+          make unit-test
+  build:
+    name: Setup, Build, Push
+    needs: test
+    strategy:
+      matrix:
+        layers: ["fastapi", "mlflow"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Auth gcloud SDK
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY }}'
+
+      - name: Docker auth
+        run: |-
+          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$AR_ZONE-docker.pkg.dev
+
+      # Build the Docker image
+      - name: Build ${{matrix.layers}} docker image
+        run: |-
+          docker build \
+            --tag "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/$IMAGE-${{matrix.layers}}:$IMAGE_TAG" \
+            --file ./docker/dockerfile_${{matrix.layers}} \
+            --build-arg GITHUB_SHA="$GITHUB_SHA" \
+            --build-arg GITHUB_REF="$GITHUB_REF" \
+            --build-arg USER_NAME="mlops" \
+            --build-arg USER_ID=500 \
+            .
+      # Push the Docker image to Google Artifact Registry
+      - name: Push
+        run: |-
+          docker push "$AR_ZONE-docker.pkg.dev/$PROJECT_ID/$AR_REPO/$IMAGE-${{matrix.layers}}:$IMAGE_TAG"
+  Deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Auth gcloud SDK
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY }}'
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Set up GKE credentials
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+
+      - name: Deploy
+        run: |-
+          kubectl get secrets gcr-creds || kubectl create secret docker-registry gcr-creds --docker-username=oauth2accesstoken --docker-password=$(gcloud auth print-access-token)
+          kubectl apply -f kubernetes/
+          kubectl get pods

@@ -1,22 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata:
-  name: temp_pred
+metadata: 
+  name: fastapi-deployment
+  labels: 
+    app: fastapi
 spec:
   replicas: 1
-  selector:
+  selector: 
     matchLabels:
-      app: temperatureprediction
+      app: fastapi
   template:
     metadata:
       labels:
-        app: temperatureprediction
+        app: fastapi
     spec:
       imagePullSecrets:
         - name: gcr-creds
       containers:
-      - name: temperatureprediction
-        image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-fastapi:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8000
+        - name: fastapi
+          image: europe-west4-docker.pkg.dev/temperature-predictor-441809/temperature-prediction/temperature-prediction-fastapi:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8000
+          env:
+            - name: TRACKING_URI
+              value: http://mlflow-service:8080
+            - name: MLFLOW_TRACKING_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-auth-secret
+                  key: MLFLOW_TRACKING_USERNAME
+            - name: MLFLOW_TRACKING_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mlflow-auth-secret
+                  key: MLFLOW_TRACKING_PASSWORD
+          
+

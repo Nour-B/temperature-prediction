@@ -1,0 +1,32 @@
+FROM python:3.11-slim
+
+ARG USER_ID
+ARG USER_NAME
+ARG GITHUB_SHA
+ARG GITHUB_REF
+
+
+ENV HOME=/home/${USER_NAME} 
+ENV PATH=$PATH:${HOME}/.local/bin:/usr/local/gcloud/google-cloud-sdk/bin
+
+RUN apt-get -qq update \
+    && apt-get -qq -y install curl
+
+RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} && \
+    chown -R ${USER_ID} ${HOME}
+
+RUN mkdir -p ${HOME}/app
+
+WORKDIR ${HOME}/app
+
+COPY app .
+
+RUN chown -R ${USER_NAME}:${USER_NAME} ${HOME}/app
+
+USER ${USER_NAME}
+
+RUN pip install -r requirements.txt
+
+CMD ["python", "main.py"]
+
+

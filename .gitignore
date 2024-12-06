@@ -111,8 +111,6 @@ env.bak/
 venv.bak/
 .envs/.app
 .envs/.dvc
-.envs/.mlflow
-.envs/.postgres
 .envs/.triton
 .envs/.secrets
 .envs/.gcp
@@ -134,4 +132,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+
 /data
+/creds
+/scripts
+my_auth_config.ini

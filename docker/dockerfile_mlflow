@@ -4,33 +4,41 @@ ARG USER_ID
 ARG USER_NAME
 ARG GITHUB_SHA
 ARG GITHUB_REF
-ARG MLFLOW_ARTIFACT_STORE
 
-ENV HOME=/home/${USER_NAME}
-ENV PATH=$PATH:${HOME}/.local/bin
+
+ENV HOME=/home/${USER_NAME} 
+ENV PATH=$PATH:${HOME}/.local/bin:/usr/local/gcloud/google-cloud-sdk/bin
 
 RUN apt-get -qq update \
-    && apt-get -qq -y install curl
+    && apt-get -qq -y install curl gettext-base
 
-RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} 
+RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-426.0.0-linux-x86_64.tar.gz > /tmp/google-cloud-sdk.tar.gz
+RUN mkdir -p /usr/local/gcloud \
+    && tar -C /usr/local/gcloud -xf /tmp/google-cloud-sdk.tar.gz \
+    && /usr/local/gcloud/google-cloud-sdk/install.sh --usage-reporting false --command-completion true --bash-completion true --path-update true --quiet
 
-COPY ./docker/scripts/* /
-RUN chown -R ${USER_NAME} /*.sh && chmod +x /*.sh
+RUN useradd --user-group --no-log-init --create-home --home-dir ${HOME} --uid ${USER_ID} ${USER_NAME} && \
+    chown -R ${USER_ID} ${HOME}
 
-RUN mkdir -p ${HOME}/app ${MLFLOW_ARTIFACT_STORE} 
-RUN chown -R ${USER_NAME} ${HOME}/app ${MLFLOW_ARTIFACT_STORE} 
+RUN mkdir -p ${HOME}/app
+
+RUN chown -R ${USER_NAME} ${HOME}/app
 
 
-RUN curl -sSL https://install.python-poetry.org | python3 -
+COPY ./docker/scripts/start-mlflow-tracking-server.sh ${HOME}/app/
+
+RUN chmod +x  ${HOME}/app/start-mlflow-tracking-server.sh
 
 USER ${USER_NAME}
+
+RUN pip install mlflow==2.18.0 psycopg2-binary~=2.9 google-cloud-storage~=2.18
  
 WORKDIR ${HOME}/app
-COPY . .
 
-RUN poetry install
+#COPY ./.envs/my_auth_config.ini /tmp/
 
+#ENV MLFLOW_AUTH_CONFIG_PATH=${HOME}/app/my_auth_config.ini
 
-CMD ["/startup-script.sh"]
+CMD ["./start-mlflow-tracking-server.sh"]
 
 

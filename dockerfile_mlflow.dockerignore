@@ -1,6 +1,0 @@
-*
-.venv
-
-!docker/scripts
-!pyproject.toml
-!poetry.lock
