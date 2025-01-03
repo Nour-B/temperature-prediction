@@ -47,6 +47,7 @@ services:
       - .envs/.mlflow_auth
     environment:
       - TRACKING_URI=http://local-mlflow-tracking-server:8080
+      - ROOT_PATH=/server
     depends_on: 
       - mlflow-tracking-server
   

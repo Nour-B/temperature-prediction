@@ -25,6 +25,8 @@ spec:
           env:
             - name: TRACKING_URI
               value: http://mlflow-service:8080
+            - name: ROOT_PATH
+              value: /server
             - name: MLFLOW_TRACKING_USERNAME
               valueFrom:
                 secretKeyRef:
