@@ -48,6 +48,7 @@ Additionally, make sure you have the following accounts and services:
 - GCP account
 - GitHub account
 - GKE cluster set up in GCP
+- Ingress controller (e.g., Nginx Ingress Controller)
 
 
 ### Setup Instructions
@@ -144,5 +145,4 @@ make gcp-cloud-functions
 
 ## Future Enhancements
 - Configure a reverse proxy with SSL certificates to enable HTTPS for the FAST API endpoint and the MLflow.
-- Implement a Kubernetes Ingress for externl Access instead of the service.
 - Use Helm to simplify the Kubernetes deployment
