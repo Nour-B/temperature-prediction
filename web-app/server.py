@@ -17,7 +17,7 @@ class Temperature(BaseModel):
     global_radiation: float
 
 
-app = FastAPI(route_path=os.getenv("ROOT_PATH", ""))
+app = FastAPI(root_path=os.getenv("ROOT_PATH", ""))
 
 mlflow.tracking.set_tracking_uri(os.environ["TRACKING_URI"])
 
