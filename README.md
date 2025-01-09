@@ -30,6 +30,7 @@ Below is the architecture diagram that illustrates the workflow of the project f
 - Flake8
 - Docker/ Docker compose
 - Kubernetes
+- Helm
 - DVC
 - GitHub Actions
 - GCP Cloud (GKE, Cloud Run Functions, Cloud storage, Secret manager, Artifact Registry)
@@ -42,6 +43,7 @@ Before getting started, ensure you have the following prerequisites:
 - Poetry
 - Docker
 - kubectl
+- Helm
 - gcloud CLI
 
 Additionally, make sure you have the following accounts and services:
@@ -125,6 +127,12 @@ This project uses a remote MLflow tracking server with the following configurati
 - GCS Bucket to store the artifacts (models)
 - PostgreSQL Database to store the metadata (parameters, metrics)
 
+## Kubernetes and Helm setup
+Before getting started, make sure to configure GKE and Kubernetes.
+
+Once the GKE cluster is set up, you can deploy the application using the Helm charts defined in the `helm` folder.
+
+
 ## CI/CD with GitHub Actions
 
 For the CI/CD, GitHub Actions is used. The workflow `.github/workflows/ci-cd.yaml` includes the following steps:
@@ -143,6 +151,5 @@ You can trigger the model training using Google cloud functions by pushing the r
 make gcp-cloud-functions
 ```
 
-## Future Enhancements
+## Future Enhancement
 - Configure a reverse proxy with SSL certificates to enable HTTPS for the FAST API endpoint and the MLflow.
-- Use Helm to simplify the Kubernetes deployment
