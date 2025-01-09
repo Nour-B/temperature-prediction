@@ -107,6 +107,6 @@ jobs:
       - name: Deploy
         run: |-
           kubectl get secrets gcr-creds || kubectl create secret docker-registry gcr-creds --docker-username=oauth2accesstoken --docker-password=$(gcloud auth print-access-token)
-          helm upgrade -i mlflow helm/mlflow --set envSecrets.MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }},envSecrets.MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }},envSecrets.POSTGRES_USER=${{ secrets.POSTGRES_USER }},envSecrets.POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }},fileSecrets."credentials\.json".value=${{ secrets.GOOGLE_CREDENTIALS }} 
+          helm upgrade -i mlflow helm/mlflow --set envSecrets.MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }},envSecrets.MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }},envSecrets.POSTGRES_USER=${{ secrets.POSTGRES_USER }},envSecrets.POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }},fileSecrets.'credentials\.json'.value=${{ secrets.GOOGLE_CREDENTIALS }} 
           helm upgrade -i fastapi helm/fastapi --set envSecrets.MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }},envSecrets.MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }} 
           
