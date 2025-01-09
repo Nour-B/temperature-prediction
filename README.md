@@ -11,9 +11,10 @@ The project includes data preprocessing, model training, evaluation and model de
 - [Setup](#setup)
 - [Development workflow](#development-workflow)
 - [Model Tracking with MLflow](#model-tracking-with-mlflow)
-- [CI/CD with GitHub Actions](#ci/cd-with-github-actions)
+- [Kubernetes and Helm setup](#kubernetes-and-helm-setup)
+- [CI/CD with GitHub Actions](#cicd-with-github-actions)
 - [Google cloud Functions](#google-cloud-functions)
-- [Future Enhancements](#future-enhancements)
+- [Future Enhancement](#future-enhancement)
 
 
 ## Architecture
